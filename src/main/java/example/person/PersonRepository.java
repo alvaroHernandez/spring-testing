@@ -6,6 +6,5 @@ import java.util.Optional;
 
 public interface PersonRepository extends CrudRepository<Person, String> {
 
-    Optional<Person> findByLastName(String lastName);
-
+    Optional<Person> findByDocument(String document);
 }

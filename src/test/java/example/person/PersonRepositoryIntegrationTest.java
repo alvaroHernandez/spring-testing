@@ -29,7 +29,7 @@ public class PersonRepositoryIntegrationTest {
         Person peter = new Person("Peter", "Pan");
         subject.save(peter);
 
-        Optional<Person> maybePeter = subject.findByLastName("Pan");
+        Optional<Person> maybePeter = subject.findByDocument("Pan");
 
         assertThat(maybePeter, is(Optional.of(peter)));
     }
