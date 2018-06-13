@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class Person {
@@ -12,13 +13,13 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
     private String firstName;
-    private String lastName;
+    private String document;
 
     protected Person() {}
 
-    public Person(String firstName, String lastName) {
+    public Person(String firstName,String document) {
         this.firstName = firstName;
-        this.lastName = lastName;
+        this.document = document;
     }
 
     public String getId() {
@@ -29,28 +30,21 @@ public class Person {
         return firstName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
+    public String getDocument() { return document; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Person person = (Person) o;
-
-        if (id != null ? !id.equals(person.id) : person.id != null) return false;
-        if (firstName != null ? !firstName.equals(person.firstName) : person.firstName != null) return false;
-        return lastName != null ? lastName.equals(person.lastName) : person.lastName == null;
+        return Objects.equals(id, person.id) &&
+                Objects.equals(firstName, person.firstName) &&
+                Objects.equals(document, person.document);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        return result;
+        return Objects.hash(id, firstName, document);
     }
 
     @Override
@@ -58,7 +52,6 @@ public class Person {
         return "Person{" +
                 "id='" + id + '\'' +
                 ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
                 '}';
     }
 }

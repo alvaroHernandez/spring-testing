@@ -42,7 +42,7 @@ public class HelloE2ESeleniumTest {
     }
 
     @Test
-    public void helloPageHasTextHelloWorld(){
+    public void adminJourney(){
         driver.navigate().to(String.format("http://localhost:%s/hello", port));
 
         WebElement body = driver.findElement(By.tagName("body"));
