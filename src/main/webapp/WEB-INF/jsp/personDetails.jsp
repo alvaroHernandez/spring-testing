@@ -3,7 +3,6 @@
 <body>
 <h1>Person Details</h1>
     Nombre: ${person.firstName}
-    Apellido: ${person.lastName}
     Cedula: ${person.document}
 </body>
 </html>
