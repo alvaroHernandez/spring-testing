@@ -5,14 +5,21 @@ import example.person.Person;
 import example.person.PersonRepository;
 import example.utils.builders.PersonBuilder;
 import example.validator.Validator;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Optional;
 
@@ -23,22 +30,33 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = PersonController.class)
+//@WebMvcTest(PersonController.class)
 public class PersonControllerTest {
     Faker faker = new Faker();
 
-    @Autowired
-    private MockMvc serviceMock;
+    @Mock
     private Validator validator;
 
     @MockBean
     private PersonRepository personRepository;
+
+    @InjectMocks
+    PersonController personController;
+    private MockMvc serviceMock;
+
+    @Before
+    public void beforeAll(){
+        MockitoAnnotations.initMocks(this);
+        serviceMock = MockMvcBuilders.standaloneSetup(personController).build();
+    }
 
     @Test
     public void shouldReturn200WhenPersonIsFound() throws Exception {
@@ -78,11 +96,20 @@ public class PersonControllerTest {
 
     @Test
     public void shouldReturn201WhenPersonIsInserted() throws Exception {
+
         Person person = newPerson().build();
         given(validator.validate(any())).willReturn(true);
         given(personRepository.save(person)).willReturn(person);
         serviceMock
-                .perform(post("/person/").content(""))
+                .perform(post("/person/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content("{\"Loja\":{\"nome\":\"teste\",\"xValue\":\"20\",\"yValue\":\"30\",\"andar\":\"1\"}}"))
+                .andDo(new ResultHandler() {
+                    @Override
+                    public void handle(MvcResult result) throws Exception {
+                        System.out.println("result = " + result.getResponse().getRedirectedUrl());
+                    }
+                })
                 .andExpect(status().isCreated());
     }
 
@@ -90,7 +117,8 @@ public class PersonControllerTest {
     @Test
     public void shouldNotInsertPersonWhenDocumentIsInvalid() throws Exception {
         Person person = newPerson().build();
-        given(validator.validate(any())).willReturn(false);
+        when(validator.validate(any())).thenReturn(false);
+
         serviceMock
                 .perform(post("/person/").content(""));
     }
