@@ -3,7 +3,7 @@ package example.validator;
 /**
  * Created by ralmeida on 6/6/18.
  */
-public class Validator {
+public class StructureValidator {
 
     public static final int MAX_PROVINCE_INDEX = 24;
     public static final int MIN_PROVINCE_INDEX = 1;
