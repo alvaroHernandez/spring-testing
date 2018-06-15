@@ -20,8 +20,8 @@ public class StructureValidator {
     }
 
     private boolean firstTwoNumbersAreBetweenZeroAnd24(String idNumber) {
-        Integer twofirstNumbers = Integer.parseInt(idNumber.substring(0,2));
-        return twofirstNumbers <= MAX_PROVINCE_INDEX && twofirstNumbers >= MIN_PROVINCE_INDEX;
+        Integer twoFirstNumbers = Integer.parseInt(idNumber.substring(0,2));
+        return twoFirstNumbers <= MAX_PROVINCE_INDEX && twoFirstNumbers >= MIN_PROVINCE_INDEX;
     }
 
     private boolean hasTenNumbers(String idNumber){
