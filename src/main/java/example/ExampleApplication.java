@@ -8,18 +8,24 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @SpringBootApplication
 @ComponentScan( basePackages = "example")
-public class ExampleApplication extends SpringBootServletInitializer {
+public class ExampleApplication {
 
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(ExampleApplication.class);
+	public static void main(String[] args) {
+		SpringApplication.run(ExampleApplication.class, args);
 	}
 
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(ExampleApplication.class, args);
+	@Bean
+	public ViewResolver viewResolver() {
+		final InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		viewResolver.setPrefix("/views/jsp/");
+		viewResolver.setSuffix(".jsp");
+		return viewResolver;
 	}
 
 	@Bean

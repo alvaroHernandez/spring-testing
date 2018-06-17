@@ -6,22 +6,14 @@ import example.person.PersonRepository;
 import example.utils.builders.PersonBuilder;
 import example.validator.Validator;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Optional;
@@ -31,10 +23,7 @@ import static example.utils.builders.PersonBuilder.newPerson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -103,7 +92,7 @@ public class PersonControllerTest {
         when(personRepository.save(person)).thenReturn(person);
         serviceMock
                 .perform(
-                        post("/person/")
+                        post("/person")
                         .flashAttr("person", new Person(person.getFirstName(),person.getDocument())))
                 .andExpect(model().attribute("person", is(person)));
     }
@@ -112,7 +101,7 @@ public class PersonControllerTest {
     public void shouldReturn201WhenPersonIsInserted() throws Exception {
         when(validator.validate(any())).thenReturn(true);
         serviceMock
-                .perform(post("/person/"))
+                .perform(post("/person"))
                 .andExpect(status().isCreated());
     }
 
@@ -123,14 +112,14 @@ public class PersonControllerTest {
         when(validator.validate(any())).thenReturn(false);
 
         serviceMock
-                .perform(post("/person/").content(""));
+                .perform(post("/person").content(""));
     }
 
     @Test
     public void shouldReturnBadRequestWhenInsertingPersonWithInvalidDocument() throws Exception {
         given(validator.validate(any())).willReturn(false);
         serviceMock
-                .perform(post("/person/").content(""))
+                .perform(post("/person").content(""))
                 .andExpect(status().isBadRequest());
     }
 
@@ -139,7 +128,7 @@ public class PersonControllerTest {
         Person person = newPerson().build();
         given(validator.validate(person.getDocument())).willReturn(false);
         serviceMock
-                .perform(post("/person/"))
+                .perform(post("/person"))
                 .andExpect(model().attribute("error", is("Invalid document number, person was not saved")));
     }
 

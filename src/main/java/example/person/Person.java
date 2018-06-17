@@ -1,5 +1,7 @@
 package example.person;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,9 +11,10 @@ import java.util.Objects;
 @Entity
 public class Person {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
     private String id;
+
     private String firstName;
     private String document;
 
@@ -19,6 +22,18 @@ public class Person {
 
     public Person(String firstName,String document) {
         this.firstName = firstName;
+        this.document = document;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setDocument(String document) {
         this.document = document;
     }
 

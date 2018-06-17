@@ -1,15 +1,21 @@
 package example.controllers;
 
+import example.person.Algo;
 import example.person.Person;
 import example.person.PersonRepository;
-import example.person.PersonRequest;
 import example.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.Optional;
 
 
@@ -22,6 +28,10 @@ public class PersonController {
     @Autowired
     private Validator validator;
 
+    @GetMapping("/person")
+    public ModelAndView getPersonForm() {
+        return new ModelAndView("addPerson","person",new Person("",""));
+    }
 
     @GetMapping("/person/{document}")
     public String getPerson(@PathVariable final String document, Model model, HttpServletResponse response) {
@@ -36,7 +46,7 @@ public class PersonController {
         }
     }
 
-    @PostMapping("/person/")
+    @PostMapping("/person")
     public String savePerson(@ModelAttribute("person")Person person, Model model, HttpServletResponse response)
     {
         if(this.validator.validate(person.getDocument())){
@@ -49,7 +59,7 @@ public class PersonController {
         {
             model.addAttribute("error", "Invalid document number, person was not saved");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return "newPerson";
+            return "addPerson";
         }
 
     }
