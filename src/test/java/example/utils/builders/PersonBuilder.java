@@ -26,6 +26,11 @@ public class PersonBuilder {
         return this;
     }
 
+    public PersonBuilder withValidDocument(){
+        this.document = "1713825394";
+        return this;
+    }
+
     public Person build() {
         return new Person(firstName,document);
     }

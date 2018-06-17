@@ -1,4 +1,4 @@
-package example;
+package e2e;
 
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import org.junit.After;
@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class HelloE2ESeleniumTest {
+public class AdminJourneyTest {
 
     private WebDriver driver;
 
@@ -43,7 +43,7 @@ public class HelloE2ESeleniumTest {
 
     @Test
     public void adminJourney(){
-        driver.navigate().to(String.format("http://localhost:%s/hello", port));
+        driver.navigate().to(String.format("http://localhost:%s/newPerson", port));
 
         WebElement body = driver.findElement(By.tagName("body"));
 

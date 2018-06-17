@@ -15,7 +15,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
@@ -37,8 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-//@WebMvcTest(PersonController.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class PersonControllerTest {
     Faker faker = new Faker();
 
@@ -95,21 +97,22 @@ public class PersonControllerTest {
     }
 
     @Test
-    public void shouldReturn201WhenPersonIsInserted() throws Exception {
-
+    public void shouldInsertPersonWhenDocumentIsValid() throws Exception {
         Person person = newPerson().build();
-        given(validator.validate(any())).willReturn(true);
-        given(personRepository.save(person)).willReturn(person);
+        when(validator.validate(person.getDocument())).thenReturn(true);
+        when(personRepository.save(person)).thenReturn(person);
         serviceMock
-                .perform(post("/person/")
-                .contentType(APPLICATION_JSON_UTF8)
-                .content("{\"Loja\":{\"nome\":\"teste\",\"xValue\":\"20\",\"yValue\":\"30\",\"andar\":\"1\"}}"))
-                .andDo(new ResultHandler() {
-                    @Override
-                    public void handle(MvcResult result) throws Exception {
-                        System.out.println("result = " + result.getResponse().getRedirectedUrl());
-                    }
-                })
+                .perform(
+                        post("/person/")
+                        .flashAttr("person", new Person(person.getFirstName(),person.getDocument())))
+                .andExpect(model().attribute("person", is(person)));
+    }
+
+    @Test
+    public void shouldReturn201WhenPersonIsInserted() throws Exception {
+        when(validator.validate(any())).thenReturn(true);
+        serviceMock
+                .perform(post("/person/"))
                 .andExpect(status().isCreated());
     }
 
@@ -136,7 +139,8 @@ public class PersonControllerTest {
         Person person = newPerson().build();
         given(validator.validate(person.getDocument())).willReturn(false);
         serviceMock
-                .perform(post("/person/").content(""))
+                .perform(post("/person/"))
                 .andExpect(model().attribute("error", is("Invalid document number, person was not saved")));
     }
+
 }
