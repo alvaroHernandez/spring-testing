@@ -23,6 +23,8 @@ import static example.utils.builders.PersonBuilder.newPerson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,6 +42,7 @@ public class PersonControllerTest {
     private PersonRepository personRepository;
 
     @InjectMocks
+    private
     PersonController personController;
     private MockMvc serviceMock;
 
@@ -105,14 +108,13 @@ public class PersonControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    //TODO: mock and verify person repository not being called
     @Test
     public void shouldNotInsertPersonWhenDocumentIsInvalid() throws Exception {
         Person person = newPerson().build();
         when(validator.validate(any())).thenReturn(false);
-
         serviceMock
                 .perform(post("/person").content(""));
+        verify(personRepository, never()).save(any(Person.class));
     }
 
     @Test
